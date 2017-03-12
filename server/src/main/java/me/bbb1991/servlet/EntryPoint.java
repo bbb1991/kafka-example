@@ -37,7 +37,6 @@ public class EntryPoint {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     public String doPost(Employee employee) {
         logger.info("Incoming POST request");
         logger.info("Employee is: {}", employee);

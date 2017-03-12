@@ -31,6 +31,9 @@ public class Employee implements Serializable {
         this.position = position;
     }
 
+    public Employee() {
+    }
+
     public String getSurname() {
         return surname;
     }

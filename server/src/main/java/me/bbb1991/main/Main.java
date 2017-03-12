@@ -2,11 +2,11 @@ package me.bbb1991.main;
 
 import me.bbb1991.config.PropertyReader;
 import me.bbb1991.config.PropertyReaderImpl;
-import me.bbb1991.servlet.EntryPoint;
+import me.bbb1991.servlet.Resources;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.glassfish.jersey.servlet.ServletContainer;
+import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,23 +26,18 @@ public class Main {
 
         int port = Integer.parseInt(reader.getPropsAsProperties().getProperty("jetty.port"));
 
-        ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-
-        contextHandler.setContextPath("/");
-
         Server server = new Server(port);
-        server.setHandler(contextHandler);
 
-        ServletHolder jerseyServlet = contextHandler.addServlet(ServletContainer.class, "/*");
-        jerseyServlet.setInitOrder(0);
-
-        jerseyServlet.setInitParameter("jersey.config.server.provider.classnames", EntryPoint.class.getCanonicalName());
-
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        context.setContextPath("/");
+        ServletHolder h = new ServletHolder(new HttpServlet30Dispatcher());
+        h.setInitParameter("javax.ws.rs.Application", Resources.class.getCanonicalName());
+        context.addServlet(h, "/*");
+        server.setHandler(context);
         server.start();
 
         logger.info("Server started!");
 
         server.join();
-
     }
 }
