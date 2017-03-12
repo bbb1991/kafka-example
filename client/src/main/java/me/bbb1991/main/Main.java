@@ -1,5 +1,6 @@
 package me.bbb1991.main;
 
+import com.nimbusds.jwt.SignedJWT;
 import me.bbb1991.config.PropertyReader;
 import me.bbb1991.config.PropertyReaderImpl;
 import me.bbb1991.consumer.SimpleConsumer;
@@ -31,17 +32,17 @@ public class Main {
 
 
         ExecutorService executorService = Executors.newFixedThreadPool(consumersNumber);
-        List<SimpleConsumer> consumers = new ArrayList<>();
+        List<SimpleConsumer<Integer, String>> consumers = new ArrayList<>();
 
 
         for (int i = 0; i < consumersNumber; i++) {
-            SimpleConsumer consumer = new SimpleConsumer(properties);
+            SimpleConsumer<Integer, String> consumer = new SimpleConsumer<>(properties);
             consumers.add(consumer);
             executorService.submit(consumer);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            for (SimpleConsumer consumer : consumers) {
+            for (SimpleConsumer<Integer, String> consumer : consumers) {
                 consumer.shutdown();
             }
             executorService.shutdown();

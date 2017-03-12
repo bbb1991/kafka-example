@@ -1,8 +1,6 @@
 package me.bbb1991.servlet;
 
 import javax.ws.rs.core.Application;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 

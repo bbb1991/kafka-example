@@ -21,14 +21,12 @@ public class Employee implements Serializable {
 
     private String address;
 
-    private Position position;
 
-    public Employee(String surname, String firstname, Integer age, String address, Position position) {
+    public Employee(String surname, String firstname, Integer age, String address) {
         this.surname = surname;
         this.firstname = firstname;
         this.age = age;
         this.address = address;
-        this.position = position;
     }
 
     public Employee() {
@@ -66,14 +64,6 @@ public class Employee implements Serializable {
         this.address = address;
     }
 
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
     @Override
     public String toString() {
         return "Employee{" +
@@ -81,7 +71,6 @@ public class Employee implements Serializable {
                 ", firstname='" + firstname + '\'' +
                 ", age=" + age +
                 ", address='" + address + '\'' +
-                ", position=" + position +
                 '}';
     }
 }

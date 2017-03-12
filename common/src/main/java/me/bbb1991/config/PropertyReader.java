@@ -3,6 +3,8 @@ package me.bbb1991.config;
 
 import org.apache.commons.configuration.Configuration;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Properties;
 
 /**

@@ -33,14 +33,18 @@ public class EntryPoint {
     public String doGet() {
         logger.info("Incoming GET request!");
         Gson gson = new Gson();
-        return gson.toJson(new Employee("Smith", "John", 25, "Tharsis, Mars", null));
+        return gson.toJson(new Employee("Smith", "John", 25, "Tharsis, Mars"));
     }
 
     @POST
     public String doPost(Employee employee) {
         logger.info("Incoming POST request");
         logger.info("Employee is: {}", employee);
-        service.sendObjectToCunsumers(employee);
+        try {
+            service.sendObjectToConsumers(employee);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "{\"status\":\"OK\"}";
     }
 }

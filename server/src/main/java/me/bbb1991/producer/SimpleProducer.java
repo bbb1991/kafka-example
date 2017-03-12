@@ -1,5 +1,6 @@
 package me.bbb1991.producer;
 
+import me.bbb1991.model.Employee;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -11,9 +12,9 @@ import java.util.Properties;
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
-public class SimpleProducer {
+public class SimpleProducer<K, V> {
 
-    private KafkaProducer<Integer, String> producer;
+    private KafkaProducer<K, V> producer;
     private String topic;
 
     public SimpleProducer(Properties properties) {
@@ -21,8 +22,8 @@ public class SimpleProducer {
         topic = properties.getProperty("topic", "test");
     }
 
-    public void produce(String message) {
-        ProducerRecord<Integer, String> data = new ProducerRecord<>(topic, message);
+    public void produce(V message) {
+        ProducerRecord<K, V> data = new ProducerRecord<>(topic, message);
         producer.send(data);
     }
 }
