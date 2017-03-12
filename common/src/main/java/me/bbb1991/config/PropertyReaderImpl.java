@@ -1,34 +1,37 @@
 package me.bbb1991.config;
 
 
-import org.apache.commons.configuration.*;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Iterator;
 import java.util.Properties;
 
 /**
- * Created by bbb1991 on 3/12/17.
+ * Класс, который считывает настройки
  *
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
 public class PropertyReaderImpl implements PropertyReader {
 
+    /**
+     * Логгер класса
+     */
     private static final Logger logger = LoggerFactory.getLogger(PropertyReaderImpl.class);
 
     private PropertiesConfiguration configuration;
 
+    /**
+     * Конструктор
+     *
+     * @param fileName файл с настройками
+     * @throws IOException
+     */
     public PropertyReaderImpl(String fileName) throws IOException {
 
         logger.info("Trying to read property file: {}", fileName);
@@ -43,10 +46,20 @@ public class PropertyReaderImpl implements PropertyReader {
         logger.info("Config file successfully parsed!");
     }
 
+    /**
+     * Получение настроек в виде {@link Configuration}. Имеет богатый функционал
+     *
+     * @return
+     */
     public Configuration getPropsAsConfiguration() {
         return configuration;
     }
 
+    /**
+     * Получение настроек в виде стандартной {@link Properties}. Плюс в том что его потом можно скормить конструктору Кафки
+     *
+     * @return
+     */
     public Properties getPropsAsProperties() {
         Properties properties = new Properties();
         Iterator<String> iterator = configuration.getKeys();

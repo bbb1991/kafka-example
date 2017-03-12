@@ -1,50 +1,50 @@
 package me.bbb1991.main;
 
-import com.nimbusds.jwt.SignedJWT;
 import me.bbb1991.config.PropertyReader;
 import me.bbb1991.config.PropertyReaderImpl;
 import me.bbb1991.consumer.SimpleConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by bbb1991 on 3/12/17.
+ * Главный класс, который запускает клиента
  *
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
 public class Main {
 
+    /**
+     * Логгер класса
+     */
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * Main метод
+     *
+     * @param args не используется
+     * @throws Exception в разных случаях
+     */
+    public static void main(String[] args) throws Exception {
+        logger.info("Loading properties");
         PropertyReader reader = new PropertyReaderImpl("application.properties");
         Properties properties = reader.getPropsAsProperties();
-        int consumersNumber = Integer.parseInt(properties.getProperty("consumers.count", "3"));
 
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(consumersNumber);
-        List<SimpleConsumer<Integer, String>> consumers = new ArrayList<>();
+        logger.info("Creating new consumer");
+        SimpleConsumer<Integer, String> consumer = new SimpleConsumer<>(properties);
 
-
-        for (int i = 0; i < consumersNumber; i++) {
-            SimpleConsumer<Integer, String> consumer = new SimpleConsumer<>(properties);
-            consumers.add(consumer);
-            executorService.submit(consumer);
-        }
+        logger.info("Staring consumer");
+        executorService.submit(consumer);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            for (SimpleConsumer<Integer, String> consumer : consumers) {
-                consumer.shutdown();
-            }
+            consumer.shutdown();
             executorService.shutdown();
             try {
                 executorService.awaitTermination(5000, TimeUnit.MILLISECONDS);

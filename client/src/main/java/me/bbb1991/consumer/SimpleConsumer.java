@@ -1,11 +1,8 @@
 package me.bbb1991.consumer;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jwt.EncryptedJWT;
 import me.bbb1991.helper.KeyReader;
-import me.bbb1991.model.Employee;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,61 +14,117 @@ import java.util.Collections;
 import java.util.Properties;
 
 /**
- * Created by bbb1991 on 3/12/17.
+ * Класс, который получает и обрабатывает сообщения
  *
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
 public class SimpleConsumer<K, V> implements Runnable {
 
+    /**
+     * С какой темой будем работать
+     */
     private String topicName;
 
+    /**
+     * Получатель сообщения
+     */
     private KafkaConsumer<K, V> consumer;
 
-
+    /**
+     * Логгер класса
+     */
     private static final Logger logger = LoggerFactory.getLogger(SimpleConsumer.class);
 
-    public SimpleConsumer(Properties properties) {
+    /**
+     * Приватный ключ, с помощью которой и будем расшифровывать
+     */
+    private RSAPrivateKey privateKey;
+
+    /**
+     * Конструктор
+     *
+     * @param properties настройки, считанные с файла
+     */
+    public SimpleConsumer(Properties properties) throws Exception {
         consumer = new KafkaConsumer<>(properties);
         this.topicName = properties.getProperty("topic");
-        logger.info("Creating new consumer");
+        logger.info("Creating new consumer...");
+
+        String keyName = properties.getProperty("private_key");
+        privateKey = (RSAPrivateKey) KeyReader.getPrivateKey(keyName);
+
     }
 
     @Override
     public void run() {
+        logger.info("Staring consumer");
         consumer.subscribe(Collections.singletonList(topicName));
         ConsumerRecords<K, V> records = consumer.poll(Long.MAX_VALUE);
         for (ConsumerRecord<K, V> record : records) {
-            V s = record.value();
+            V value = record.value();
 
-            String str;
+            logger.info("Got new encrypted message: {}", value);
 
-            if (s instanceof String) {
-                str = (String) s;
-            } else {
-                str = s.toString();
-            }
-
-            try {
-                RSAPrivateKey privateKey = (RSAPrivateKey) KeyReader.getPrivateKey("private.der");
-
-                EncryptedJWT jwt = EncryptedJWT.parse(str);
-                RSADecrypter decrypter = new RSADecrypter(privateKey);
-
-                jwt.decrypt(decrypter);
-
-                System.out.println(jwt.getJWTClaimsSet().getClaim("employee"));
-
-
-            } catch (Exception e) {
-                logger.error("Error: ", e);
-            }
+            String json = encrypt(value);
+            doStuff(json);
         }
         consumer.close();
     }
 
+    /**
+     * Прерывание работы клиента
+     */
     public void shutdown() {
         logger.info("Shutting down consumer...");
         consumer.wakeup();
+    }
+
+    /**
+     * Расшифровка сообщения
+     *
+     * @param message пришедшее сообщения
+     * @return расшифрованное сообщение в виде JSON
+     */
+    private String encrypt(V message) {
+
+        logger.info("Encrypting message");
+
+        String result = null;
+
+        String str;
+
+        if (message instanceof String) {
+            str = (String) message;
+        } else {
+            str = message.toString();
+        }
+
+        try {
+
+            EncryptedJWT jwt = EncryptedJWT.parse(str);
+            RSADecrypter decrypter = new RSADecrypter(privateKey);
+
+            jwt.decrypt(decrypter);
+
+            result = jwt.getJWTClaimsSet().getClaim("employee").toString();
+
+
+        } catch (Exception e) {
+            logger.error("Error: ", e);
+            throw new RuntimeException(e);
+        }
+
+        logger.info("Encryption completed!");
+        return result;
+    }
+
+    /**
+     * Метод, который что то будет делать с полученным обектом. Не знаю, писать в БД или еще какое-то действие
+     *
+     * @param json
+     */
+    private void doStuff(String json) {
+        logger.info("Got message is: {}", json);
     }
 }

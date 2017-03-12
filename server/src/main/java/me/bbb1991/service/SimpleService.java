@@ -22,15 +22,25 @@ import java.security.interfaces.RSAPublicKey;
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
-public class BaseService {
+public class SimpleService {
 
     private SimpleProducer<Integer, String> producer;
 
-    public BaseService() throws IOException {
+    /**
+     * Конструктор
+     * @throws IOException
+     */
+    public SimpleService() throws IOException {
         PropertyReader reader = new PropertyReaderImpl("application.properties");
         producer = new SimpleProducer<>(reader.getPropsAsProperties());
     }
 
+    /**
+     * Отправление полученного сообщения
+     *
+     * @param employee
+     * @throws Exception
+     */
     public void sendObjectToConsumers(Employee employee) throws Exception {
         RSAPublicKey publicKey = (RSAPublicKey) KeyReader.getPublicKey("public.der");
 

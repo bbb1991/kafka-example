@@ -11,13 +11,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by bbb1991 on 3/12/17.
+ * Главный класс, который запускает сервер
  *
  * @author Bagdat Bimaganbetov
  * @author bagdat.bimaganbetov@gmail.com
  */
 public class Main {
 
+    /**
+     * Логгер класса
+     */
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
@@ -28,7 +31,7 @@ public class Main {
 
         Server server = new Server(port);
 
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         ServletHolder h = new ServletHolder(new HttpServlet30Dispatcher());
         h.setInitParameter("javax.ws.rs.Application", Resources.class.getCanonicalName());

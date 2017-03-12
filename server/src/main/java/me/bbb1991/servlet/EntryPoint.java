@@ -2,12 +2,13 @@ package me.bbb1991.servlet;
 
 import com.google.gson.Gson;
 import me.bbb1991.model.Employee;
-import me.bbb1991.service.BaseService;
+import me.bbb1991.service.SimpleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 /**
@@ -23,7 +24,7 @@ public class EntryPoint {
 
     private static final Logger logger = LoggerFactory.getLogger(EntryPoint.class);
 
-    private BaseService service = new BaseService();
+    private SimpleService service = new SimpleService();
 
     public EntryPoint() throws IOException {
         logger.info("Initializing endpoint");
@@ -43,7 +44,9 @@ public class EntryPoint {
         try {
             service.sendObjectToConsumers(employee);
         } catch (Exception e) {
+            logger.error("", e);
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return "{\"status\":\"OK\"}";
     }
