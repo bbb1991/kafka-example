@@ -1,9 +1,8 @@
 # Пример взаимодействия сервер клиента через Kafka
 ![David Dependency Management](https://david-dm.org/bbb1991/kafka-example.svg)
-![Kafka](kafka.jpg)
 
 ## Общие сведения
-
+![Kafka](kafka.jpg)
 
 Простой пример работы с Apache Kafka, Подписанием JSON обьекта RSA ключом.
 Состоит из модулей клиент-сервер.
