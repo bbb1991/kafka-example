@@ -1,4 +1,5 @@
 # Пример взаимодействия сервер клиента через Kafka
+![David Dependency Management](https://david-dm.org/bbb1991/kafka-example.svg)
 ![Kafka](kafka.jpg)
 
 ## Общие сведения
