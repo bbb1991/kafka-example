@@ -1,5 +1,6 @@
 # Пример взаимодействия сервер клиента через Kafka
 ![David Dependency Management](https://david-dm.org/bbb1991/kafka-example.svg)
+![Travis CI](https://travis-ci.org/bbb1991/kafka-example.svg?branch=master)
 
 ## Общие сведения
 ![Kafka](kafka.jpg)
